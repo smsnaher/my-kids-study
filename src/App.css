@@ -65,14 +65,14 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
 .auth-button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -99,7 +99,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #4CAF50;
+  color: #4caf50;
   cursor: pointer;
   text-decoration: underline;
   font-size: inherit;
@@ -193,4 +193,19 @@
 .dashboard-content p {
   color: #666;
   line-height: 1.6;
+}
+
+.edit-button {
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  background-color: #4caf50;
+
+  &.student {
+    background-color: #2196F3;
+  }
 }

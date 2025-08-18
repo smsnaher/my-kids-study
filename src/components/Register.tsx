@@ -11,12 +11,13 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [role, setRole] = useState('teacher');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password || !confirmPassword) {
       setError('Please fill in all fields');
       return;
@@ -35,7 +36,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     try {
       setError('');
       setLoading(true);
-      await registerUser(email, password, displayName);
+      await registerUser(email, password, role, displayName);
       // User will be redirected automatically by the AuthContext
     } catch (error: unknown) {
       const errorMessage = getFirebaseErrorMessage(error);
@@ -49,9 +50,9 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     <div className="auth-container">
       <form onSubmit={handleSubmit} className="auth-form">
         <h2>Register</h2>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="form-group">
           <label htmlFor="displayName">Display Name:</label>
           <input
@@ -62,7 +63,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             placeholder="Enter your name"
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="email">Email:</label>
           <input
@@ -73,7 +74,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="password">Password:</label>
           <input
@@ -85,7 +86,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             minLength={6}
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password:</label>
           <input
@@ -97,11 +98,17 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             minLength={6}
           />
         </div>
-        
+        <div className='form-group'>
+          <select name="role" id="">
+            <option value="teacher" selected>Teacher</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+
         <button type="submit" disabled={loading} className="auth-button">
           {loading ? 'Creating Account...' : 'Register'}
         </button>
-        
+
         <p className="auth-switch">
           Already have an account?{' '}
           <button type="button" onClick={onSwitchToLogin} className="link-button">

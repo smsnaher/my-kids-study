@@ -9,6 +9,7 @@ import {
   getDoc, 
   collection, 
   addDoc, 
+  updateDoc, 
   Timestamp 
 } from 'firebase/firestore';
 import { auth, db } from './config';
@@ -16,12 +17,13 @@ import { auth, db } from './config';
 export interface UserData {
   uid: string;
   email: string;
+  role: string;
   displayName?: string;
   createdAt: Timestamp;
 }
 
 // Register a new user
-export const registerUser = async (email: string, password: string, displayName?: string) => {
+export const registerUser = async (email: string, password: string, role: string, displayName?: string) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
   
@@ -30,6 +32,7 @@ export const registerUser = async (email: string, password: string, displayName?
     uid: user.uid,
     email: user.email!,
     displayName: displayName || '',
+    role: role || 'teacher', // Default role, can be changed later
     createdAt: Timestamp.now()
   };
   
@@ -47,6 +50,12 @@ export const loginUser = async (email: string, password: string) => {
 // Logout user
 export const logoutUser = async () => {
   await signOut(auth);
+};
+
+// Update user role in Firestore
+export const updateUserRole = async (uid: string, newRole: string) => {
+  const userRef = doc(db, 'users', uid);
+  await updateDoc(userRef, { role: newRole });
 };
 
 // Get user data from Firestore
