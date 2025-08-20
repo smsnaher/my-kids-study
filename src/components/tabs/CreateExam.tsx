@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
-import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore';
 import { ExamModal } from './ExamModal';
 import { useAuth } from '../../hooks/useAuth';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +23,8 @@ export const CreateExam: React.FC = () => {
     const [exams, setExams] = useState<Exam[]>([]);
     const [listLoading, setListLoading] = useState(false);
     const { currentUser } = useAuth();
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editingName, setEditingName] = useState('');
 
     // Close modal and reset state
     const handleClose = () => {
@@ -139,18 +141,61 @@ export const CreateExam: React.FC = () => {
                     <ul>
                         {exams.map(exam => (
                             <li key={exam.id || exam.docId} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <strong>{exam.name}</strong> <span style={{ color: '#888', fontSize: 12 }}>({exam.id})</span>
-                                <button
-                                    style={{ marginLeft: 8, background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
-                                    onClick={async () => {
-                                        if (window.confirm('Are you sure you want to delete this exam?')) {
-                                            await deleteDoc(doc(db, 'examinations', exam.docId));
-                                            await fetchExams();
-                                        }
-                                    }}
-                                >
-                                    Delete
-                                </button>
+                                {editingId === exam.docId ? (
+                                    <>
+                                        <input
+                                            type="text"
+                                            value={editingName}
+                                            onChange={e => setEditingName(e.target.value)}
+                                            style={{ marginRight: 8, padding: '2px 6px', fontSize: 15 }}
+                                        />
+                                        <button
+                                            style={{ background: '#27ae60', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer', marginRight: 4 }}
+                                            onClick={async () => {
+                                                if (!editingName.trim()) return;
+                                                await updateDoc(doc(db, 'examinations', exam.docId), { name: editingName });
+                                                setEditingId(null);
+                                                setEditingName('');
+                                                await fetchExams();
+                                            }}
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            style={{ background: '#bbb', color: '#222', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
+                                            onClick={() => {
+                                                setEditingId(null);
+                                                setEditingName('');
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <strong style={{ color: '#888' }}>{exam.name}</strong>
+                                        <button
+                                            style={{ marginLeft: 8, background: '#2980b9', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
+                                            onClick={() => {
+                                                setEditingId(exam.docId);
+                                                setEditingName(exam.name);
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            style={{ marginLeft: 8, background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
+                                            onClick={async () => {
+                                                if (window.confirm('Are you sure you want to delete this exam?')) {
+                                                    await deleteDoc(doc(db, 'examinations', exam.docId));
+                                                    await fetchExams();
+                                                }
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
                             </li>
                         ))}
                     </ul>
