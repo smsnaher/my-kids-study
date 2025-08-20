@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
@@ -18,6 +16,7 @@ interface Exam {
 
 
 
+
 export const CreateExam: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [examName, setExamName] = useState('');
@@ -27,6 +26,14 @@ export const CreateExam: React.FC = () => {
     const [exams, setExams] = useState<Exam[]>([]);
     const [listLoading, setListLoading] = useState(false);
     const { currentUser } = useAuth();
+
+    // Close modal and reset state
+    const handleClose = () => {
+        setModalOpen(false);
+        setExamName('');
+        setError(null);
+        setSuccess(false);
+    };
 
     const handleOpen = () => {
         setModalOpen(true);
@@ -38,25 +45,29 @@ export const CreateExam: React.FC = () => {
     // Fetch exams for the current user
     const fetchExams = async () => {
         if (!currentUser) {
-            console.log('No currentUser');
             setExams([]);
             return;
         }
-        // setListLoading(true);
+        setListLoading(true);
         try {
-            console.log('Fetching exams for user:', currentUser.uid);
             const q = query(
                 collection(db, 'examinations'),
                 where('userId', '==', currentUser.uid),
                 orderBy('createdAt', 'desc')
             );
             const querySnapshot = await getDocs(q);
-            console.log('querySnapshot.docs:', querySnapshot.docs);
-            const docsData = querySnapshot.docs.map(doc => ({ ...doc.data(), docId: doc.id }));
-            console.log('docsData:', docsData);
+            const docsData: Exam[] = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: data.id,
+                    name: data.name,
+                    userId: data.userId,
+                    createdAt: data.createdAt,
+                    docId: doc.id,
+                };
+            });
             setExams(docsData);
-        } catch (e) {
-            console.error('Error fetching exams:', e);
+        } catch {
             setExams([]);
         } finally {
             setListLoading(false);
@@ -97,13 +108,6 @@ export const CreateExam: React.FC = () => {
                 handleClose();
             }, 1000);
         } catch {
-            setError('Failed to create exam');
-        } finally {
-            setLoading(false);
-        }
-    };
-            // }, 1000);
-        } catch (err) {
             setError('Failed to create exam');
         } finally {
             setLoading(false);
