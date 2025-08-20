@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
@@ -6,6 +7,14 @@ import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc } fr
 import { ExamModal } from './ExamModal';
 import { useAuth } from '../../hooks/useAuth';
 import { v4 as uuidv4 } from 'uuid';
+
+interface Exam {
+    id: string;
+    name: string;
+    userId: string;
+    createdAt: any;
+    docId: string;
+}
 
 
 
@@ -15,7 +24,7 @@ export const CreateExam: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
-    const [exams, setExams] = useState<any[]>([]);
+    const [exams, setExams] = useState<Exam[]>([]);
     const [listLoading, setListLoading] = useState(false);
     const { currentUser } = useAuth();
 
@@ -54,23 +63,14 @@ export const CreateExam: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        console.log(exams);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [exams]);
+    // useEffect(() => {
+    //     console.log(exams);
+    // }, [exams]);
 
     useEffect(() => {
         fetchExams();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]);
-
-    const handleClose = () => {
-        setModalOpen(false);
-        setExamName('');
-        setError(null);
-        setSuccess(false);
-    };
 
     const handleSave = async () => {
         if (!examName.trim()) {
@@ -93,8 +93,15 @@ export const CreateExam: React.FC = () => {
             });
             setSuccess(true);
             await fetchExams(); // Refresh list after save
-            // setTimeout(() => {
-            handleClose();
+            setTimeout(() => {
+                handleClose();
+            }, 1000);
+        } catch {
+            setError('Failed to create exam');
+        } finally {
+            setLoading(false);
+        }
+    };
             // }, 1000);
         } catch (err) {
             setError('Failed to create exam');

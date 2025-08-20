@@ -99,8 +99,8 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           />
         </div>
         <div className='form-group'>
-          <select name="role" id="">
-            <option value="teacher" selected>Teacher</option>
+          <select name="role" value={role} onChange={e => setRole(e.target.value)}>
+            <option value="teacher">Teacher</option>
             <option value="student">Student</option>
           </select>
         </div>
