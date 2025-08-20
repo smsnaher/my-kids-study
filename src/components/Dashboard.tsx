@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
       <div className="user-info">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>User Information</h2>
-          <button className={`edit-button ${userRole}`} onClick={switchUserRole}>Switch to {userRole === 'teacher' ? 'Student' : 'Teacher'}</button>
+          <button className={`edit-button ${userRole}`} onClick={switchUserRole}>Switch to {userRole === 'teacher' ? 'Student 👨‍🎓 ' : 'Teacher 👨‍🏫 '}</button>
         </div>
         <div className="info-item">
           <strong>Email:</strong> {currentUser?.email}
