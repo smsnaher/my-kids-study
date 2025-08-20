@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
-import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp } from 'firebase/firestore';
 import { ExamModal } from './ExamModal';
 import { useAuth } from '../../hooks/useAuth';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,12 +10,9 @@ interface Exam {
     id: string;
     name: string;
     userId: string;
-    createdAt: any;
+    createdAt: Timestamp;
     docId: string;
 }
-
-
-
 
 export const CreateExam: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
