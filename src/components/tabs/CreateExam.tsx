@@ -3,8 +3,10 @@ import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
 import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore';
 import { ExamModal } from './ExamModal';
+
 import { useAuth } from '../../hooks/useAuth';
 import { v4 as uuidv4 } from 'uuid';
+
 
 interface Exam {
     id: string;
@@ -14,7 +16,11 @@ interface Exam {
     docId: string;
 }
 
-export const CreateExam: React.FC = () => {
+interface CreateExamProps {
+    setDetailExam: (exam: Exam | null) => void;
+}
+
+export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [examName, setExamName] = useState('');
     const [loading, setLoading] = useState(false);
@@ -173,7 +179,12 @@ export const CreateExam: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <strong style={{ color: '#888' }}>{exam.name}</strong>
+                                        <strong
+                                            style={{ color: '#888', cursor: 'pointer', textDecoration: 'underline' }}
+                                            onClick={() => setDetailExam(exam)}
+                                        >
+                                            {exam.name}
+                                        </strong>
                                         <button
                                             style={{ marginLeft: 8, background: '#2980b9', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
                                             onClick={() => {
