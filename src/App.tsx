@@ -5,6 +5,8 @@ import { useAuth } from './hooks/useAuth';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ExamDetail } from './components/tabs/ExamDetail';
 
 const AuthWrapper: React.FC = () => {
   const { currentUser } = useAuth();
@@ -26,10 +28,16 @@ const AuthWrapper: React.FC = () => {
   );
 };
 
+
 function App() {
   return (
     <AuthProvider>
-      <AuthWrapper />
+      <Router>
+        <Routes>
+          <Route path="/kids-study/" element={<AuthWrapper />} />
+          <Route path="/kids-study/exam/:id" element={<ExamDetail exam={{id: '', name: '', userId: '', createdAt: '', docId: ''}} onClose={() => {}} />} />
+        </Routes>
+      </Router>
     </AuthProvider>
   );
 }

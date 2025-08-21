@@ -1,3 +1,16 @@
+.examDetailContainer {
+  min-width: 100vw;
+  box-sizing: border-box;
+  padding: 30px;
+}
+
+.examDetailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -14,7 +27,7 @@
 .modal {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
   padding: 2rem 2.5rem 1.5rem 2.5rem;
   min-width: 320px;
   max-width: 90vw;
@@ -25,9 +38,6 @@
 }
 
 .closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 18px;
   background: none;
   border: none;
   font-size: 1.5rem;

@@ -75,7 +75,7 @@ const Dashboard: React.FC = () => {
         {/* If detailExam is set, show ExamDetail, otherwise show TeacherView or StudentView */}
         {userRole === 'teacher' ? (
           detailExam ? (
-            <ExamDetail exam={detailExam} onClose={() => setDetailExam(null)} />
+            <ExamDetail />
           ) : (
             <TeacherView setDetailExam={setDetailExam} />
           )

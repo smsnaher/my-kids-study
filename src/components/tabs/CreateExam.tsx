@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './CreateExam.module.css';
 import { db } from '../../firebase/config';
 import { collection, addDoc, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore';
@@ -100,7 +101,8 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
         setLoading(true);
         setError(null);
         try {
-            const examId = uuidv4();
+            // Generate a short 9-character exam id
+            const examId = uuidv4().replace(/-/g, '').slice(0, 9);
             await addDoc(collection(db, 'examinations'), {
                 id: examId,
                 name: examName,
@@ -144,7 +146,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
                 ) : exams.length === 0 ? (
                     <div>No exams found.</div>
                 ) : (
-                    <ul>
+                    <ol>
                         {exams.map(exam => (
                             <li key={exam.id || exam.docId} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 {editingId === exam.docId ? (
@@ -179,12 +181,12 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
                                     </>
                                 ) : (
                                     <>
-                                        <strong
+                                        <Link
+                                            to={`exam/${exam.id}`}
                                             style={{ color: '#888', cursor: 'pointer', textDecoration: 'underline' }}
-                                            onClick={() => setDetailExam(exam)}
                                         >
                                             {exam.name}
-                                        </strong>
+                                        </Link>
                                         <button
                                             style={{ marginLeft: 8, background: '#2980b9', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', cursor: 'pointer' }}
                                             onClick={() => {
@@ -209,7 +211,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
                                 )}
                             </li>
                         ))}
-                    </ul>
+                    </ol>
                 )}
             </div>
         </div>
