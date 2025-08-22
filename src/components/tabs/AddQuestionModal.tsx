@@ -1,4 +1,6 @@
 import React from 'react';
+import SumQuestion from '../questions/SumQuestion';
+import SubtractionQuestion from '../questions/SubtractionQuestion';
 import styles from './ExamDetail.module.css';
 
 interface AddQuestionModalProps {
@@ -9,6 +11,8 @@ interface AddQuestionModalProps {
   success: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  sumNumbers: string[];
+  setSumNumbers: (nums: string[]) => void;
 }
 
 const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
@@ -19,6 +23,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   success,
   onClose,
   onSubmit,
+  sumNumbers,
+  setSumNumbers,
 }) => (
   <div className={styles.modalOverlay}>
     <div className={styles.modal}>
@@ -30,14 +36,14 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         }}
       >
         <h3 style={{ marginTop: 0 }}>Add Question</h3>
-        <input
-          type="text"
-          placeholder="Enter question"
-          value={question}
-          onChange={e => setQuestion(e.target.value)}
-          className={styles.input}
-        />
-        <div className={styles.actions}>
+        <select value={question} onChange={e => setQuestion(e.target.value)} className={styles.select}>
+          <option value="">Select a question</option>
+          <option value="sum">Sum</option>
+          <option value="subtraction">Subtraction</option>
+        </select>
+  {question === 'sum' && <SumQuestion numbers={sumNumbers} setNumbers={setSumNumbers} />}
+        {question === 'subtraction' && <SubtractionQuestion />}
+         <div className={styles.actions}>
           <button type="submit" disabled={saving}>
             {saving ? 'Saving...' : 'Add Question'}
           </button>

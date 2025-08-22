@@ -4,6 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 import styles from './ExamDetail.module.css';
 import { getExamDetailById } from '../../data/examData';
 import type { Exam } from '../../data/examData';
+import { saveQuestionToExam, fetchQuestionsByExamId } from '../../data/questionData';
+import { sumAdminTemplate } from '../../utils/templates';
 import AddQuestionModal from './AddQuestionModal';
 
 
@@ -15,11 +17,12 @@ export const ExamDetail: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [question, setQuestion] = useState('');
-    const [questions, setQuestions] = useState<string[]>([]);
+    const [questions, setQuestions] = useState<any[]>([]);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [showForm, setShowForm] = useState(false);
+    const [sumNumbers, setSumNumbers] = useState<string[]>(["", ""]);
 
     useEffect(() => {
         if (id) {
@@ -27,30 +30,51 @@ export const ExamDetail: React.FC = () => {
         }
     }, [id]);
 
-    const handleAddQuestion = async () => {
-        if (!question.trim()) {
-            setError('Question is required');
-            return;
-        }
-        setSaving(true);
-        setError(null);
-        try {
-            // TODO: Save question to Firestore under this exam
-            setQuestions(prev => [...prev, question]);
-            setSuccess(true);
-            setQuestion('');
-            setTimeout(() => setSuccess(false), 1200);
-            setShowForm(false);
-        } catch {
-            setError('Failed to save question');
-        } finally {
-            setSaving(false);
-        }
-    };
+        const handleAddQuestion = async () => {
+            if (!question.trim() || !exam) {
+                setError('Question is required');
+                return;
+            }
+            setSaving(true);
+            setError(null);
+            try {
+                    if (question === 'sum') {
+                        // Convert string inputs to numbers, filter out empty
+                        const nums = sumNumbers.map(n => Number(n)).filter(n => !isNaN(n));
+                        await saveQuestionToExam(exam.id || exam.docId, question, nums);
+                    } else {
+                        await saveQuestionToExam(exam.id || exam.docId, question);
+                    }
+                setSuccess(true);
+                setQuestion('');
+                setTimeout(() => setSuccess(false), 1200);
+                setShowForm(false);
+                // Refresh questions from Firestore
+                if (exam) {
+                    const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
+                    setQuestions(qs);
+                }
+            } catch {
+                setError('Failed to save question');
+            } finally {
+                setSaving(false);
+            }
+        };
 
-    if (loading) return <div>Loading exam...</div>;
-    if (fetchError) return <div style={{ color: 'red' }}>{fetchError}</div>;
-    if (!exam) return null;
+        useEffect(() => {
+            // Fetch questions for this exam when exam is loaded
+            const fetchQuestions = async () => {
+                if (exam) {
+                    const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
+                    setQuestions(qs);
+                }
+            };
+            fetchQuestions();
+        }, [exam]);
+
+        if (loading) return <div>Loading exam...</div>;
+        if (fetchError) return <div style={{ color: 'red' }}>{fetchError}</div>;
+        if (!exam) return null;
 
     return (
         <div className={styles.examDetailContainer}>
@@ -79,8 +103,10 @@ export const ExamDetail: React.FC = () => {
                     saving={saving}
                     error={error}
                     success={success}
-                    onClose={() => { setShowForm(false); setError(null); setQuestion(''); }}
+                    onClose={() => { setShowForm(false); setError(null); setQuestion(''); setSumNumbers(["", ""]); }}
                     onSubmit={handleAddQuestion}
+                    sumNumbers={sumNumbers}
+                    setSumNumbers={setSumNumbers}
                 />
             )}
 
@@ -90,7 +116,11 @@ export const ExamDetail: React.FC = () => {
             ) : (
                 <ul>
                     {questions.map((q, idx) => (
-                        <li key={idx} style={{ marginBottom: 6 }}>{q}</li>
+                        <li key={idx} style={{ marginBottom: 6 }}>
+                          {q.text === 'sum' && Array.isArray(q.data)
+                            ? sumAdminTemplate(q.data)
+                            : q.text}
+                        </li>
                     ))}
                 </ul>
             )}
