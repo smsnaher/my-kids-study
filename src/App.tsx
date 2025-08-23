@@ -6,7 +6,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import StudentExamDetail from './components/StudentExamDetail';
+import ExamDetail from './components/ExamDetail.tsx';
 
 const AuthWrapper: React.FC = () => {
   const { currentUser } = useAuth();
@@ -35,7 +35,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/kids-study/" element={<AuthWrapper />} />
-          <Route path="/kids-study/exam/:id" element={<StudentExamDetail />} />
+          <Route path="/kids-study/exam/:id" element={<ExamDetail />} />
         </Routes>
       </Router>
     </AuthProvider>

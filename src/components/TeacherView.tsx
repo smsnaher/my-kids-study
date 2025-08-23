@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CreateExam } from "./tabs/CreateExam";
 
-export const TeacherView: React.FC = () => {
+export const TeacherView: React.FC<{ role: string }> = ({ role }) => {
     const [activeTab, setActiveTab] = useState(0);
 
     return (

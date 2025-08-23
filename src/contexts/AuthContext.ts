@@ -6,10 +6,14 @@ export interface AuthContextType {
   currentUser: User | null;
   userData: UserData | null;
   loading: boolean;
+  refreshUserData: () => Promise<void>;
+  switchUserRole: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   currentUser: null,
   userData: null,
   loading: true,
+  refreshUserData: async () => {},
+  switchUserRole: async () => {},
 });

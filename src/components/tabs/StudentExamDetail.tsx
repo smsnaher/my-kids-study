@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchExamById } from '../data/examData';
-import { fetchQuestionsByExamId } from '../data/questionData';
-import type { Exam } from '../data/examData';
-import type { Question as BaseQuestion } from '../data/questionData';
-import { fetchExamSubmission } from '../data/fetchExamSubmission';
-import { useAuth } from '../hooks/useAuth';
-import { sumStudentTemplate } from '../utils/templates';
-import SumQuestionStudent from './questions/SumQuestionStudent';
-import { submitExam } from '../data/examSubmissionData';
+import { fetchExamById } from '../../data/examData';
+import { fetchQuestionsByExamId } from '../../data/questionData';
+import type { Exam } from '../../data/examData';
+import type { Question as BaseQuestion } from '../../data/questionData';
+import { fetchExamSubmission } from '../../data/fetchExamSubmission';
+import { useAuth } from '../../hooks/useAuth';
+import { sumStudentTemplate } from '../../utils/templates';
+import SumQuestionStudent from '../questions/SumQuestionStudent';
+import { submitExam } from '../../data/examSubmissionData';
 
 // Extend Question type to allow optional data property for sum questions
 interface QuestionWithData extends BaseQuestion {
     data?: number[];
 }
 
-const StudentExamDetail: React.FC = () => {
+export const StudentExamDetail: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { currentUser } = useAuth();
@@ -135,5 +135,3 @@ const StudentExamDetail: React.FC = () => {
         </div>
     );
 };
-
-export default StudentExamDetail;

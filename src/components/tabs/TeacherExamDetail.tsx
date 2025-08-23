@@ -1,7 +1,8 @@
 import { assignExamToUsers } from '../../data/examAssignmentData';
 import { fetchAllUsers } from '../../data/userData';
 import type { User } from '../../data/userData';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 import { Link, useParams } from 'react-router-dom';
 import styles from './ExamDetail.module.css';
 import { getExamDetailById } from '../../data/examData';
@@ -17,7 +18,8 @@ interface QuestionWithData extends BaseQuestion {
 
 // Exam interface imported from examData
 
-export const ExamDetail: React.FC = () => {
+export const TeacherExamDetail: React.FC = () => {
+    const { userData } = useContext(AuthContext);
     const { id } = useParams();
     const [exam, setExam] = useState<Exam | null>(null);
     const [loading, setLoading] = useState(true);
@@ -164,16 +166,23 @@ export const ExamDetail: React.FC = () => {
 
     return (
         <div className={styles.examDetailContainer}>
+            {/* DEBUG: Show userData and role */}
+            <div style={{ background: '#ffe', color: '#333', padding: 8, marginBottom: 12, fontSize: 13, border: '1px solid #ccc' }}>
+                <strong>DEBUG userData:</strong> {JSON.stringify(userData)}<br />
+                <strong>DEBUG role:</strong> {userData?.role}
+            </div>
             <div className={styles.examDetail}>
                 <div className={styles.examDetailHeader}>
                     <Link to="/kids-study/" className={styles.closeBtn}>← Back to Dashboard</Link>
-                    <button
-                        className={styles.modal}
-                        style={{ padding: '0.7rem 1.5rem', fontSize: '1rem', cursor: 'pointer', background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5 }}
-                        onClick={() => setShowForm(true)}
-                    >
-                        Add Question
-                    </button>
+                    {userData?.role === 'teacher' && (
+                        <button
+                            className={styles.modal}
+                            style={{ padding: '0.7rem 1.5rem', fontSize: '1rem', cursor: 'pointer', background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5 }}
+                            onClick={() => setShowForm(true)}
+                        >
+                            Add Question
+                        </button>
+                    )}
                 </div>
                 <h2 style={{ margin: 0, flex: 1, fontWeight: 'normal' }}>
                     <strong>Exam Title:</strong>
@@ -182,7 +191,7 @@ export const ExamDetail: React.FC = () => {
             </div>
 
             {/* Modal for adding question */}
-            {showForm && (
+            {userData?.role === 'teacher' && showForm && (
                 <AddQuestionModal
                     question={question}
                     setQuestion={setQuestion}
@@ -196,43 +205,45 @@ export const ExamDetail: React.FC = () => {
                 />
             )}
 
-
-
-            <h3>Assign Users</h3>
-            <button
-                onClick={handleSaveAssignments}
-                disabled={assigning}
-                style={{ marginBottom: 16, marginRight: 8, padding: '6px 18px', fontSize: 15, background: '#aaa', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
-            >
-                {assigning ? 'Saving...' : 'Save'}
-            </button>
-            <button
-                onClick={handleAssignExam}
-                disabled={assigning}
-                style={{ marginBottom: 16, padding: '6px 18px', fontSize: 15, background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
-            >
-                {assigning ? 'Assigning...' : 'Save & Assign'}
-            </button>
-            {assignError && <div style={{ color: 'red', marginBottom: 8 }}>{assignError}</div>}
-            {assignSuccess && <div style={{ color: 'green', marginBottom: 8 }}>Exam assigned successfully!</div>}
-            {users.length === 0 ? (
-                <div style={{ color: '#888' }}>No users found.</div>
-            ) : (
-                <ul style={{ marginBottom: 32 }}>
-                    {users.map(user => (
-                        <li key={user.uid} style={{ marginBottom: 6 }}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={!!assigned[user.uid]}
-                                    onChange={() => handleAssign(user.uid)}
-                                    style={{ marginRight: 8 }}
-                                />
-                                {user.displayName || user.email} {user.role ? <span style={{ color: '#888', fontSize: 13 }}>({user.role})</span> : null}
-                            </label>
-                        </li>
-                    ))}
-                </ul>
+            {userData?.role === 'teacher' && (
+                <>
+                    <h3>Assign Users</h3>
+                    <button
+                        onClick={handleSaveAssignments}
+                        disabled={assigning}
+                        style={{ marginBottom: 16, marginRight: 8, padding: '6px 18px', fontSize: 15, background: '#aaa', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
+                    >
+                        {assigning ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                        onClick={handleAssignExam}
+                        disabled={assigning}
+                        style={{ marginBottom: 16, padding: '6px 18px', fontSize: 15, background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
+                    >
+                        {assigning ? 'Assigning...' : 'Save & Assign'}
+                    </button>
+                    {assignError && <div style={{ color: 'red', marginBottom: 8 }}>{assignError}</div>}
+                    {assignSuccess && <div style={{ color: 'green', marginBottom: 8 }}>Exam assigned successfully!</div>}
+                    {users.length === 0 ? (
+                        <div style={{ color: '#888' }}>No users found.</div>
+                    ) : (
+                        <ul style={{ marginBottom: 32 }}>
+                            {users.map(user => (
+                                <li key={user.uid} style={{ marginBottom: 6 }}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={!!assigned[user.uid]}
+                                            onChange={() => handleAssign(user.uid)}
+                                            style={{ marginRight: 8 }}
+                                        />
+                                        {user.displayName || user.email} {user.role ? <span style={{ color: '#888', fontSize: 13 }}>({user.role})</span> : null}
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </>
             )}
 
             <h3>Questions</h3>

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { logoutUser, updateUserRole } from '../firebase/auth';
+import { logoutUser } from '../firebase/auth';
 import { StudentView } from './StudentView';
 import { TeacherView } from './TeacherView';
 
 const Dashboard: React.FC = () => {
-  const { currentUser, userData } = useAuth();
-  const [userRole, setUserRole] = useState(userData?.role || 'teacher');
+  const { currentUser, userData, switchUserRole } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -16,17 +15,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const switchUserRole = async () => {
-    const newRole = userRole === 'teacher' ? 'student' : 'teacher';
-    setUserRole(newRole);
-    if (currentUser) {
-      try {
-        await updateUserRole(currentUser.uid, newRole);
-      } catch (error) {
-        console.error('Error updating user role:', error);
-      }
-    }
-  };
+  
 
   return (
     <div className="dashboard-container">
@@ -42,7 +31,9 @@ const Dashboard: React.FC = () => {
       <div className="user-info">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>User Information</h2>
-          <button className={`edit-button ${userRole}`} onClick={switchUserRole}>Switch to {userRole === 'teacher' ? 'Student 👨‍🎓 ' : 'Teacher 👨‍🏫 '}</button>
+          <button className={`edit-button ${userData?.role}`} onClick={switchUserRole}>
+            Switch to {userData?.role === 'teacher' ? 'Student 👨‍🎓 ' : 'Teacher 👨‍🏫 '}
+          </button>
         </div>
         <div className="info-item">
           <strong>Email:</strong> {currentUser?.email}
@@ -54,7 +45,7 @@ const Dashboard: React.FC = () => {
         )}
         {userData?.role && (
           <div className="info-item">
-            <strong>Role:</strong> {userRole}
+            <strong>Role:</strong> {userData.role}
           </div>
         )}
         <div className="info-item">
@@ -71,10 +62,10 @@ const Dashboard: React.FC = () => {
 
       <div className="dashboard-content">
         {/* If detailExam is set, show ExamDetail, otherwise show TeacherView or StudentView */}
-        {userRole === 'teacher' ? (
-          <TeacherView />
+        {userData?.role === 'teacher' ? (
+          <TeacherView role={userData.role} />
         ) : (
-          <StudentView />
+          <StudentView role={userData?.role || 'student'} />
         )}
       </div>
     </div>
