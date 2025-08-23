@@ -3,19 +3,24 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchExamById } from '../data/examData';
 import { fetchQuestionsByExamId } from '../data/questionData';
 import type { Exam } from '../data/examData';
-import type { Question } from '../data/questionData';
+import type { Question as BaseQuestion } from '../data/questionData';
 import { fetchExamSubmission } from '../data/fetchExamSubmission';
 import { useAuth } from '../hooks/useAuth';
 import { sumStudentTemplate } from '../utils/templates';
 import SumQuestionStudent from './questions/SumQuestionStudent';
 import { submitExam } from '../data/examSubmissionData';
 
+// Extend Question type to allow optional data property for sum questions
+interface QuestionWithData extends BaseQuestion {
+    data?: number[];
+}
+
 const StudentExamDetail: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const [exam, setExam] = useState<Exam | null>(null);
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const [questions, setQuestions] = useState<QuestionWithData[]>([]);
     const [answers, setAnswers] = useState<{ [questionId: string]: string }>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -88,9 +93,9 @@ const StudentExamDetail: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 {questions.map(q => (
                     <div key={q.id ?? ''} style={{ marginBottom: 16 }}>
-                        {'data' in q && q.type === 'sum' && Array.isArray((q as any).data) ? (
+                        {q.type === 'sum' && Array.isArray(q.data) ? (
                             <SumQuestionStudent
-                                question={sumStudentTemplate((q as any).data)}
+                                question={sumStudentTemplate(q.data!)}
                                 value={answers[q.id ?? ''] || ''}
                                 onChange={e => handleAnswerChange(q.id ? String(q.id) : '', e.target.value)}
                             />
