@@ -1,5 +1,5 @@
-import { fetchAllStudents } from '../../data/studentData';
-import type { Student } from '../../data/studentData';
+import { fetchAllUsers } from '../../data/userData';
+import type { User } from '../../data/userData';
 
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -26,11 +26,11 @@ export const ExamDetail: React.FC = () => {
     const [success, setSuccess] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [sumNumbers, setSumNumbers] = useState<string[]>(["", ""]);
-    const [students, setStudents] = useState<Student[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [assigned, setAssigned] = useState<{ [uid: string]: boolean }>({});
-    // Fetch all students on mount
+    // Fetch all users on mount
     useEffect(() => {
-        fetchAllStudents().then(setStudents);
+        fetchAllUsers().then(setUsers);
     }, []);
     // Handler for assigning/unassigning students
     const handleAssign = (uid: string) => {
@@ -150,21 +150,21 @@ export const ExamDetail: React.FC = () => {
 
 
 
-            <h3>Assign Students</h3>
-            {students.length === 0 ? (
-                <div style={{ color: '#888' }}>No students found.</div>
+            <h3>Assign Users</h3>
+            {users.length === 0 ? (
+                <div style={{ color: '#888' }}>No users found.</div>
             ) : (
                 <ul style={{ marginBottom: 32 }}>
-                    {students.map(stu => (
-                        <li key={stu.uid} style={{ marginBottom: 6 }}>
+                    {users.map(user => (
+                        <li key={user.uid} style={{ marginBottom: 6 }}>
                             <label>
                                 <input
                                     type="checkbox"
-                                    checked={!!assigned[stu.uid]}
-                                    onChange={() => handleAssign(stu.uid)}
+                                    checked={!!assigned[user.uid]}
+                                    onChange={() => handleAssign(user.uid)}
                                     style={{ marginRight: 8 }}
                                 />
-                                {stu.displayName || stu.email}
+                                {user.displayName || user.email} {user.role ? <span style={{color:'#888', fontSize:13}}>({user.role})</span> : null}
                             </label>
                         </li>
                     ))}
