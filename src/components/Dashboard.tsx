@@ -3,12 +3,10 @@ import { useAuth } from '../hooks/useAuth';
 import { logoutUser, updateUserRole } from '../firebase/auth';
 import { StudentView } from './StudentView';
 import { TeacherView } from './TeacherView';
-import { ExamDetail } from './tabs/ExamDetail';
 
 const Dashboard: React.FC = () => {
   const { currentUser, userData } = useAuth();
   const [userRole, setUserRole] = useState(userData?.role || 'teacher');
-  const [detailExam, setDetailExam] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -74,11 +72,7 @@ const Dashboard: React.FC = () => {
       <div className="dashboard-content">
         {/* If detailExam is set, show ExamDetail, otherwise show TeacherView or StudentView */}
         {userRole === 'teacher' ? (
-          detailExam ? (
-            <ExamDetail />
-          ) : (
-            <TeacherView setDetailExam={setDetailExam} />
-          )
+          <TeacherView />
         ) : (
           <StudentView />
         )}
