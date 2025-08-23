@@ -5,7 +5,7 @@ import { fetchExamById } from '../data/examData';
 import { Link } from 'react-router-dom';
 import type { Exam } from '../data/examData';
 
-export const StudentView: React.FC<{ role: string }> = ({ role }) => {
+export const StudentView: React.FC = () => {
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
     const [exams, setExams] = useState<Exam[]>([]);
