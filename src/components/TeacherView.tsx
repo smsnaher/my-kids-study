@@ -34,7 +34,7 @@ export const TeacherView: React.FC<TeacherViewProps> = ({ setDetailExam }) => {
                 </button>
             </div>
             <div className="tab-content">
-                {activeTab === 0 && <CreateExam setDetailExam={setDetailExam} />}
+                {activeTab === 0 && <CreateExam />}
                 {activeTab === 1 && <><h3>Tab 2 Content</h3><p>This is the content for Tab 2.</p></>}
                 {activeTab === 2 && <><h3>Tab 3 Content</h3><p>This is the content for Tab 3.</p></>}
             </div>
