@@ -6,12 +6,13 @@ export interface Question {
   examId: string;
   type: string;
   createdAt: Timestamp | Date;
+  data?: number[];
 }
 
 // Save a question to the 'questions' collection for a specific exam
 // Accepts optional data for sum questions
 export async function saveQuestionToExam(examId: string, type: string, data?: number[]) {
-  const question: any = {
+  const question: Question = {
     examId,
     type,
     createdAt: new Date(),

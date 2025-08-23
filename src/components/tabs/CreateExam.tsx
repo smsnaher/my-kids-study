@@ -17,18 +17,13 @@ interface Exam {
     docId: string;
 }
 
-interface CreateExamProps {
-    setDetailExam: (exam: Exam | null) => void;
-}
-
-export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
+export const CreateExam: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [examName, setExamName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [exams, setExams] = useState<Exam[]>([]);
-    const [listLoading, setListLoading] = useState(false);
     const { currentUser } = useAuth();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editingName, setEditingName] = useState('');
@@ -141,9 +136,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
             )}
             <div className={styles.examList} style={{ marginTop: 32 }}>
                 <h3>Your Exams</h3>
-                {listLoading ? (
-                    <div>Loading...</div>
-                ) : exams.length === 0 ? (
+                {exams.length === 0 ? (
                     <div>No exams found.</div>
                 ) : (
                     <ol>

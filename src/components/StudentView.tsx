@@ -3,18 +3,19 @@ import { useAuth } from '../hooks/useAuth';
 import { fetchAssignedExamsForUser } from '../data/assignedExamData';
 import { fetchExamById } from '../data/examData';
 import { Link } from 'react-router-dom';
+import type { Exam } from '../data/examData';
 
 export const StudentView: React.FC = () => {
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [exams, setExams] = useState<any[]>([]);
+    const [exams, setExams] = useState<Exam[]>([]);
 
     useEffect(() => {
         if (!currentUser) return;
         setLoading(true);
         fetchAssignedExamsForUser(currentUser.uid).then(async (ids) => {
             const examObjs = await Promise.all(ids.map(id => fetchExamById(id)));
-            setExams(examObjs.filter(Boolean));
+            setExams(examObjs.filter(Boolean) as Exam[]);
             setLoading(false);
         });
     }, [currentUser]);

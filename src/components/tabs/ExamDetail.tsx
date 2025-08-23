@@ -1,16 +1,15 @@
 import { assignExamToUsers } from '../../data/examAssignmentData';
 import { fetchAllUsers } from '../../data/userData';
 import type { User } from '../../data/userData';
-
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styles from './ExamDetail.module.css';
 import { getExamDetailById } from '../../data/examData';
 import type { Exam } from '../../data/examData';
 import { saveQuestionToExam, fetchQuestionsByExamId } from '../../data/questionData';
+import type { Question } from '../../data/questionData';
 import { sumAdminTemplate } from '../../utils/templates';
 import AddQuestionModal from './AddQuestionModal';
-
 
 
 // Exam interface imported from examData
@@ -21,7 +20,7 @@ export const ExamDetail: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [question, setQuestion] = useState('');
-    const [questions, setQuestions] = useState<any[]>([]);
+    const [questions, setQuestions] = useState<Question[]>([]);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -113,8 +112,8 @@ export const ExamDetail: React.FC = () => {
             if (exam) {
                 const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
                 // Sort by createdAt descending (handle Firestore Timestamp, Date, string, number)
-                const getDate = (val: any) => {
-                    if (val && typeof val.toDate === 'function') return val.toDate();
+                const getDate = (val: unknown) => {
+                    if (val && typeof (val as any).toDate === 'function') return (val as { toDate: () => Date }).toDate();
                     if (val instanceof Date) return val;
                     if (typeof val === 'string' || typeof val === 'number') return new Date(val);
                     return new Date();
@@ -139,8 +138,8 @@ export const ExamDetail: React.FC = () => {
             if (exam) {
                 const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
                 // Sort by createdAt descending (handle Firestore Timestamp, Date, string, number)
-                const getDate = (val: any) => {
-                    if (val && typeof val.toDate === 'function') return val.toDate();
+                const getDate = (val: unknown) => {
+                    if (val && typeof (val as any).toDate === 'function') return (val as { toDate: () => Date }).toDate();
                     if (val instanceof Date) return val;
                     if (typeof val === 'string' || typeof val === 'number') return new Date(val);
                     return new Date();
@@ -240,8 +239,8 @@ export const ExamDetail: React.FC = () => {
                 <ul>
                     {questions.map((q, idx) => (
                         <li key={idx} style={{ marginBottom: 6 }}>
-                            {q.type === 'sum' && Array.isArray(q.data)
-                                ? sumAdminTemplate(q.data)
+                            {q.type === 'sum' && 'data' in q && Array.isArray((q as any).data)
+                                ? sumAdminTemplate((q as any).data)
                                 : q.type}
                         </li>
                     ))}

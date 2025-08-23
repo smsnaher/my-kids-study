@@ -6,7 +6,7 @@ export interface User {
   email: string;
   displayName?: string;
   role?: string;
-  createdAt?: any;
+  createdAt?: import('firebase/firestore').Timestamp | Date;
 }
 
 export async function fetchAllUsers(): Promise<User[]> {

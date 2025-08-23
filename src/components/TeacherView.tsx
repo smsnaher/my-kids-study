@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { CreateExam } from "./tabs/CreateExam";
+import type { Exam } from '../data/examData';
 
 interface TeacherViewProps {
-    setDetailExam: (exam: any) => void;
+    setDetailExam: (exam: Exam | null) => void;
 }
 
 export const TeacherView: React.FC<TeacherViewProps> = ({ setDetailExam }) => {

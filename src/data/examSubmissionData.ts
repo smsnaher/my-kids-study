@@ -6,34 +6,28 @@ export interface ExamSubmission {
   userId: string;
   answers: { [questionId: string]: string };
   submittedAt: Date;
+  submitted?: boolean;
 }
-
-
-// Upsert: update if exists, otherwise add new
 
 // Upsert: update if exists, otherwise add new. If submitted=true, add/update the 'submitted' key.
 export async function submitExam(examId: string, userId: string, answers: { [questionId: string]: string }, submitted: boolean = false) {
   const submissionsRef = collection(db, 'examSubmissions');
   const q = query(submissionsRef, where('examId', '==', examId), where('userId', '==', userId));
   const snapshot = await getDocs(q);
-  const submission: any = {
+  const submission: ExamSubmission = {
     examId,
     userId,
     answers,
     submittedAt: new Date(),
+    submitted: submitted,
   };
-  if (submitted) {
-    submission.submitted = true;
-  } else {
-    submission.submitted = false;
-  }
   if (!snapshot.empty) {
     // Update the first found document
     const docRef = doc(db, 'examSubmissions', snapshot.docs[0].id);
-    const updateData: any = {
+    const updateData: Partial<ExamSubmission> = {
       answers,
       submittedAt: new Date(),
-      submitted: submitted ? true : false,
+      submitted,
     };
     await updateDoc(docRef, updateData);
   } else {

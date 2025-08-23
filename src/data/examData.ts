@@ -11,7 +11,7 @@ export interface Exam {
   id?: string;   // internal id field (optional)
   name: string;
   userId: string;
-  createdAt: any;
+  createdAt: import('firebase/firestore').Timestamp | Date;
 }
 
 export async function fetchExamById(id: string): Promise<Exam | null> {
@@ -38,13 +38,13 @@ export async function getExamDetailById(id: string, setExam: (exam: Exam | null)
   setLoading(true);
   setFetchError(null);
   try {
-  const examData = await fetchExamById(id);
+    const examData = await fetchExamById(id);
     if (examData) {
       setExam(examData);
     } else {
       setFetchError('Exam not found');
     }
-  } catch (err) {
+  } catch {
     setFetchError('Failed to fetch exam');
   } finally {
     setLoading(false);

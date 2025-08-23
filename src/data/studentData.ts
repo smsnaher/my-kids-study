@@ -5,7 +5,7 @@ export interface Student {
   uid: string;
   email: string;
   displayName?: string;
-  createdAt?: any;
+  createdAt?: import('firebase/firestore').Timestamp | Date;
 }
 
 export async function fetchAllStudents(): Promise<Student[]> {
