@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchExamById } from '../data/examData';
 import { fetchQuestionsByExamId } from '../data/questionData';
+import type { Exam } from '../data/examData';
+import type { Question } from '../data/questionData';
 import { fetchExamSubmission } from '../data/fetchExamSubmission';
 import { useAuth } from '../hooks/useAuth';
 import { sumStudentTemplate } from '../utils/templates';
@@ -12,8 +14,8 @@ const StudentExamDetail: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const [exam, setExam] = useState<any>(null);
-    const [questions, setQuestions] = useState<any[]>([]);
+    const [exam, setExam] = useState<Exam | null>(null);
+    const [questions, setQuestions] = useState<Question[]>([]);
     const [answers, setAnswers] = useState<{ [questionId: string]: string }>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -82,23 +84,23 @@ const StudentExamDetail: React.FC = () => {
 
     return (
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            <h2>{exam.name}</h2>
+            <h2>{exam?.name}</h2>
             <form onSubmit={handleSubmit}>
                 {questions.map(q => (
-                    <div key={q.id} style={{ marginBottom: 16 }}>
-                        {q.type === 'sum' && Array.isArray(q.data) ? (
+                    <div key={q.id ?? ''} style={{ marginBottom: 16 }}>
+                        {'data' in q && q.type === 'sum' && Array.isArray((q as any).data) ? (
                             <SumQuestionStudent
-                                question={sumStudentTemplate(q.data)}
-                                value={answers[q.id] || ''}
-                                onChange={e => handleAnswerChange(q.id, e.target.value)}
+                                question={sumStudentTemplate((q as any).data)}
+                                value={answers[q.id ?? ''] || ''}
+                                onChange={e => handleAnswerChange(q.id ? String(q.id) : '', e.target.value)}
                             />
                         ) : (
                             <>
                                 <div>{q.type}</div>
                                 <input
                                     type="text"
-                                    value={answers[q.id] || ''}
-                                    onChange={e => handleAnswerChange(q.id, e.target.value)}
+                                    value={answers[q.id ?? ''] || ''}
+                                    onChange={e => handleAnswerChange(q.id ? String(q.id) : '', e.target.value)}
                                     style={{ marginTop: 4, padding: '4px 8px', fontSize: 15 }}
                                     placeholder="Your answer"
                                 />
