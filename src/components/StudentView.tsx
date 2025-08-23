@@ -6,6 +6,7 @@ import { fetchQuestionsByExamId } from '../data/questionData';
 import { sumStudentTemplate } from '../utils/templates';
 import SumQuestionStudent from './questions/SumQuestionStudent';
 import { submitExam } from '../data/examSubmissionData';
+import { fetchExamSubmission } from '../data/fetchExamSubmission';
 
 export const StudentView: React.FC = () => {
     const { currentUser } = useAuth();
@@ -14,6 +15,7 @@ export const StudentView: React.FC = () => {
     const [exams, setExams] = useState<any[]>([]);
     const [questions, setQuestions] = useState<{ [examId: string]: any[] }>({});
     const [answers, setAnswers] = useState<{ [examId: string]: { [questionId: string]: string } }>({});
+    const [saving, setSaving] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -28,12 +30,20 @@ export const StudentView: React.FC = () => {
             setExams(examObjs.filter(Boolean));
             // Fetch questions for each exam
             const qMap: { [examId: string]: any[] } = {};
+            const aMap: { [examId: string]: { [questionId: string]: string } } = {};
             for (const exam of examObjs) {
                 if (exam) {
-                    qMap[exam.id || exam.docId] = await fetchQuestionsByExamId(exam.id || exam.docId);
+                    const examKey = exam.id || exam.docId;
+                    qMap[examKey] = await fetchQuestionsByExamId(examKey);
+                    // Fetch saved answers for this exam
+                    const submission = await fetchExamSubmission(examKey, currentUser.uid);
+                    if (submission && submission.answers) {
+                        aMap[examKey] = submission.answers;
+                    }
                 }
             }
             setQuestions(qMap);
+            setAnswers(aMap);
             setLoading(false);
         });
     }, [currentUser]);
@@ -48,13 +58,30 @@ export const StudentView: React.FC = () => {
         }));
     };
 
+    // Save (draft) handler
+    const handleSave = async (examId: string) => {
+        if (!currentUser) return;
+        setSaving(examId);
+        setSubmitError(null);
+        try {
+            await submitExam(examId, currentUser.uid, answers[examId] || {}, false);
+            setSubmitSuccess(examId + '-save');
+            setTimeout(() => setSubmitSuccess(null), 2000);
+        } catch {
+            setSubmitError('Failed to save exam.');
+        } finally {
+            setSaving(null);
+        }
+    };
+
+    // Submit (final) handler
     const handleSubmit = async (examId: string) => {
         if (!currentUser) return;
         setSubmitting(examId);
         setSubmitError(null);
         try {
-            await submitExam(examId, currentUser.uid, answers[examId] || {});
-            setSubmitSuccess(examId);
+            await submitExam(examId, currentUser.uid, answers[examId] || {}, true);
+            setSubmitSuccess(examId + '-submit');
             setTimeout(() => setSubmitSuccess(null), 2000);
         } catch {
             setSubmitError('Failed to submit exam.');
@@ -99,6 +126,15 @@ export const StudentView: React.FC = () => {
                                     )}
                                 </div>
                             ))}
+                            
+                            <button
+                                type="button"
+                                disabled={saving === (exam.id || exam.docId)}
+                                style={{ marginTop: 8, marginRight: 8, padding: '6px 18px', fontSize: 15, background: '#aaa', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
+                                onClick={() => handleSave(exam.id || exam.docId)}
+                            >
+                                {saving === (exam.id || exam.docId) ? 'Saving...' : 'Save'}
+                            </button>
                             <button
                                 type="submit"
                                 disabled={submitting === (exam.id || exam.docId)}
@@ -106,7 +142,8 @@ export const StudentView: React.FC = () => {
                             >
                                 {submitting === (exam.id || exam.docId) ? 'Submitting...' : 'Submit Exam'}
                             </button>
-                            {submitSuccess === (exam.id || exam.docId) && <span style={{ color: 'green', marginLeft: 12 }}>Submitted!</span>}
+                            {submitSuccess === (exam.id || exam.docId + '-save') && <span style={{ color: 'green', marginLeft: 12 }}>Saved!</span>}
+                            {submitSuccess === (exam.id || exam.docId + '-submit') && <span style={{ color: 'green', marginLeft: 12 }}>Submitted!</span>}
                             {submitError && <span style={{ color: 'red', marginLeft: 12 }}>{submitError}</span>}
                         </form>
                     </div>
