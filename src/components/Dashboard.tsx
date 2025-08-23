@@ -63,9 +63,9 @@ const Dashboard: React.FC = () => {
       <div className="dashboard-content">
         {/* If detailExam is set, show ExamDetail, otherwise show TeacherView or StudentView */}
         {userData?.role === 'teacher' ? (
-          <TeacherView role={userData.role} />
+          <TeacherView />
         ) : (
-          <StudentView role={userData?.role || 'student'} />
+          <StudentView />
         )}
       </div>
     </div>
