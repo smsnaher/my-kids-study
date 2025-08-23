@@ -33,6 +33,28 @@ export const ExamDetail: React.FC = () => {
     const [assigning, setAssigning] = useState(false);
     const [assignSuccess, setAssignSuccess] = useState(false);
     const [assignError, setAssignError] = useState<string | null>(null);
+    // Save assignments only
+    const handleSaveAssignments = async () => {
+        if (!exam) return;
+        const selectedUserIds = Object.keys(assigned).filter(uid => assigned[uid]);
+        if (selectedUserIds.length === 0) {
+            setAssignError('Please select at least one user.');
+            return;
+        }
+        setAssigning(true);
+        setAssignError(null);
+        try {
+            await assignExamToUsers(exam.id || exam.docId, selectedUserIds, false);
+            setAssignSuccess(true);
+            setTimeout(() => setAssignSuccess(false), 1500);
+        } catch {
+            setAssignError('Failed to save assignments.');
+        } finally {
+            setAssigning(false);
+        }
+    };
+
+    // Save & Assign (submitted)
     const handleAssignExam = async () => {
         if (!exam) return;
         const selectedUserIds = Object.keys(assigned).filter(uid => assigned[uid]);
@@ -43,7 +65,7 @@ export const ExamDetail: React.FC = () => {
         setAssigning(true);
         setAssignError(null);
         try {
-            await assignExamToUsers(exam.id || exam.docId, selectedUserIds);
+            await assignExamToUsers(exam.id || exam.docId, selectedUserIds, true);
             setAssignSuccess(true);
             setTimeout(() => setAssignSuccess(false), 1500);
         } catch {
@@ -176,11 +198,18 @@ export const ExamDetail: React.FC = () => {
 
             <h3>Assign Users</h3>
             <button
+                onClick={handleSaveAssignments}
+                disabled={assigning}
+                style={{ marginBottom: 16, marginRight: 8, padding: '6px 18px', fontSize: 15, background: '#aaa', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
+            >
+                {assigning ? 'Saving...' : 'Save'}
+            </button>
+            <button
                 onClick={handleAssignExam}
                 disabled={assigning}
                 style={{ marginBottom: 16, padding: '6px 18px', fontSize: 15, background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
             >
-                {assigning ? 'Assigning...' : 'Assign Exam'}
+                {assigning ? 'Assigning...' : 'Save & Assign'}
             </button>
             {assignError && <div style={{ color: 'red', marginBottom: 8 }}>{assignError}</div>}
             {assignSuccess && <div style={{ color: 'green', marginBottom: 8 }}>Exam assigned successfully!</div>}

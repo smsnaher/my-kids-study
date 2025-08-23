@@ -6,7 +6,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ExamDetail } from './components/tabs/ExamDetail';
+import StudentExamDetail from './components/StudentExamDetail';
 
 const AuthWrapper: React.FC = () => {
   const { currentUser } = useAuth();
@@ -35,7 +35,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/kids-study/" element={<AuthWrapper />} />
-          <Route path="/kids-study/exam/:id" element={<ExamDetail exam={{id: '', name: '', userId: '', createdAt: '', docId: ''}} onClose={() => {}} />} />
+          <Route path="/kids-study/exam/:id" element={<StudentExamDetail />} />
         </Routes>
       </Router>
     </AuthProvider>

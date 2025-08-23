@@ -1,4 +1,3 @@
-
 import { db } from '../firebase/config';
 import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 
@@ -23,15 +22,19 @@ export async function submitExam(examId: string, userId: string, answers: { [que
     answers,
     submittedAt: new Date(),
   };
-  if (submitted) submission.submitted = true;
+  if (submitted) {
+    submission.submitted = true;
+  } else {
+    submission.submitted = false;
+  }
   if (!snapshot.empty) {
     // Update the first found document
     const docRef = doc(db, 'examSubmissions', snapshot.docs[0].id);
     const updateData: any = {
       answers,
       submittedAt: new Date(),
+      submitted: submitted ? true : false,
     };
-    if (submitted) updateData.submitted = true;
     await updateDoc(docRef, updateData);
   } else {
     // Add new document

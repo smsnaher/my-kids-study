@@ -54,7 +54,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
             setExams([]);
             return;
         }
-        setListLoading(true);
+        // setListLoading(true);
         try {
             const q = query(
                 collection(db, 'examinations'),
@@ -76,7 +76,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
         } catch {
             setExams([]);
         } finally {
-            setListLoading(false);
+            // setListLoading(false);
         }
     };
 
@@ -98,7 +98,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
             setError('User not authenticated');
             return;
         }
-        setLoading(true);
+        // setLoading(true);
         setError(null);
         try {
             // Generate a short 9-character exam id
@@ -112,7 +112,7 @@ export const CreateExam: React.FC<CreateExamProps> = ({ setDetailExam }) => {
             setSuccess(true);
             await fetchExams(); // Refresh list after save
             setTimeout(() => {
-                handleClose();
+                // handleClose(); 
             }, 1000);
         } catch {
             setError('Failed to create exam');
