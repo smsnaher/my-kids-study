@@ -52,6 +52,18 @@ export const ExamDetail: React.FC = () => {
                 // Refresh questions from Firestore
                 if (exam) {
                     const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
+                    // Sort by createdAt descending (handle Firestore Timestamp, Date, string, number)
+                    const getDate = (val: any) => {
+                        if (val && typeof val.toDate === 'function') return val.toDate();
+                        if (val instanceof Date) return val;
+                        if (typeof val === 'string' || typeof val === 'number') return new Date(val);
+                        return new Date();
+                    };
+                    qs.sort((a, b) => {
+                        const aDate = getDate(a.createdAt);
+                        const bDate = getDate(b.createdAt);
+                        return aDate.getTime() - bDate.getTime();
+                    });
                     setQuestions(qs);
                 }
             } catch {
@@ -66,6 +78,18 @@ export const ExamDetail: React.FC = () => {
             const fetchQuestions = async () => {
                 if (exam) {
                     const qs = await fetchQuestionsByExamId(exam.id || exam.docId);
+                    // Sort by createdAt descending (handle Firestore Timestamp, Date, string, number)
+                    const getDate = (val: any) => {
+                        if (val && typeof val.toDate === 'function') return val.toDate();
+                        if (val instanceof Date) return val;
+                        if (typeof val === 'string' || typeof val === 'number') return new Date(val);
+                        return new Date();
+                    };
+                    qs.sort((a, b) => {
+                        const aDate = getDate(a.createdAt);
+                        const bDate = getDate(b.createdAt);
+                        return aDate.getTime() - bDate.getTime();
+                    });
                     setQuestions(qs);
                 }
             };

@@ -9,5 +9,8 @@ export const subtractionTemplate = (minuend: number, subtrahend: number) => {
 };
 
 export const sumAdminTemplate = (numbers: number[]) => {
-  return `Admin: The sum of ${numbers.join(" + ")} = ?`;
+  return `What is the sum of ${numbers.join(" + ")} = ?`;
+};
+export const sumStudentTemplate = (numbers: number[]) => {
+  return `What is the sum of ${numbers.join(" + ")} = ?`;
 };
