@@ -1,3 +1,4 @@
+import { assignExamToUsers } from '../../data/examAssignmentData';
 import { fetchAllUsers } from '../../data/userData';
 import type { User } from '../../data/userData';
 
@@ -28,6 +29,29 @@ export const ExamDetail: React.FC = () => {
     const [sumNumbers, setSumNumbers] = useState<string[]>(["", ""]);
     const [users, setUsers] = useState<User[]>([]);
     const [assigned, setAssigned] = useState<{ [uid: string]: boolean }>({});
+
+    const [assigning, setAssigning] = useState(false);
+    const [assignSuccess, setAssignSuccess] = useState(false);
+    const [assignError, setAssignError] = useState<string | null>(null);
+    const handleAssignExam = async () => {
+        if (!exam) return;
+        const selectedUserIds = Object.keys(assigned).filter(uid => assigned[uid]);
+        if (selectedUserIds.length === 0) {
+            setAssignError('Please select at least one user.');
+            return;
+        }
+        setAssigning(true);
+        setAssignError(null);
+        try {
+            await assignExamToUsers(exam.id || exam.docId, selectedUserIds);
+            setAssignSuccess(true);
+            setTimeout(() => setAssignSuccess(false), 1500);
+        } catch {
+            setAssignError('Failed to assign exam.');
+        } finally {
+            setAssigning(false);
+        }
+    };
     // Fetch all users on mount
     useEffect(() => {
         fetchAllUsers().then(setUsers);
@@ -151,6 +175,15 @@ export const ExamDetail: React.FC = () => {
 
 
             <h3>Assign Users</h3>
+            <button
+                onClick={handleAssignExam}
+                disabled={assigning}
+                style={{ marginBottom: 16, padding: '6px 18px', fontSize: 15, background: '#0077ff', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' }}
+            >
+                {assigning ? 'Assigning...' : 'Assign Exam'}
+            </button>
+            {assignError && <div style={{ color: 'red', marginBottom: 8 }}>{assignError}</div>}
+            {assignSuccess && <div style={{ color: 'green', marginBottom: 8 }}>Exam assigned successfully!</div>}
             {users.length === 0 ? (
                 <div style={{ color: '#888' }}>No users found.</div>
             ) : (
@@ -164,7 +197,7 @@ export const ExamDetail: React.FC = () => {
                                     onChange={() => handleAssign(user.uid)}
                                     style={{ marginRight: 8 }}
                                 />
-                                {user.displayName || user.email} {user.role ? <span style={{color:'#888', fontSize:13}}>({user.role})</span> : null}
+                                {user.displayName || user.email} {user.role ? <span style={{ color: '#888', fontSize: 13 }}>({user.role})</span> : null}
                             </label>
                         </li>
                     ))}
