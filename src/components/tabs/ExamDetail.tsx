@@ -211,9 +211,9 @@ export const ExamDetail: React.FC = () => {
                 <ul>
                     {questions.map((q, idx) => (
                         <li key={idx} style={{ marginBottom: 6 }}>
-                            {q.text === 'sum' && Array.isArray(q.data)
+                            {q.type === 'sum' && Array.isArray(q.data)
                                 ? sumAdminTemplate(q.data)
-                                : q.text}
+                                : q.type}
                         </li>
                     ))}
                 </ul>

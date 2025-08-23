@@ -4,16 +4,16 @@ import { collection, addDoc, getDocs, query, where, Timestamp } from 'firebase/f
 export interface Question {
   id?: string;
   examId: string;
-  text: string;
+  type: string;
   createdAt: Timestamp | Date;
 }
 
 // Save a question to the 'questions' collection for a specific exam
 // Accepts optional data for sum questions
-export async function saveQuestionToExam(examId: string, text: string, data?: number[]) {
+export async function saveQuestionToExam(examId: string, type: string, data?: number[]) {
   const question: any = {
     examId,
-    text,
+    type,
     createdAt: new Date(),
   };
   if (data && Array.isArray(data)) {
