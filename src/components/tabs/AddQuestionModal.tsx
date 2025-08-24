@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addQuestionGroupType } from '../../data/examQuestionGroupType';
+import { addQuestionGroupType } from '../../data/groupTypeService';
 import styles from './ExamDetail.module.css';
 import { QuestionGroupType } from '../questions/QuestionGroupType';
 import { QuestionAddingForm } from '../questions/QuestionAddingForm';
@@ -35,6 +35,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
   // Handler to save group type to Firestore
   const handleAddType = async (type: string, mark: string) => {
+    console.log('Adding group type:', { examId, type, mark });
+
     setGroupTypeSaving(true);
     setGroupTypeError(null);
     try {
