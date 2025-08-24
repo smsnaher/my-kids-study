@@ -151,7 +151,7 @@ To deploy:
 
 1. Push your changes to the `main` branch
 2. GitHub Actions will automatically build and deploy to GitHub Pages
-3. Your app will be available at: `https://smsnaher.github.io/kids-study/`
+3. Your app will be available at: `https://smsnaher.github.io/my-kids-study/`
 
 ## Security Rules (Firestore)
 

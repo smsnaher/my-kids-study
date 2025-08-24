@@ -35,7 +35,7 @@ export const StudentView: React.FC = () => {
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                     {uniqueExams.map(exam => (
                         <li key={exam.id || exam.docId} style={{ marginBottom: 16 }}>
-                            <Link to={`/kids-study/exam/${exam.id || exam.docId}`} style={{ fontSize: 18, textDecoration: 'underline', color: '#0077ff' }}>
+                            <Link to={`/my-kids-study/exam/${exam.id || exam.docId}`} style={{ fontSize: 18, textDecoration: 'underline', color: '#0077ff' }}>
                                 {exam.name}
                             </Link>
                         </li>
