@@ -188,6 +188,7 @@ export const TeacherExamDetail: React.FC = () => {
             {/* Modal for adding question */}
             {userData?.role === 'teacher' && showForm && (
                 <AddQuestionModal
+                    examId={exam.id || exam.docId}
                     question={question}
                     setQuestion={setQuestion}
                     saving={saving}
@@ -197,11 +198,6 @@ export const TeacherExamDetail: React.FC = () => {
                     onSubmit={handleAddQuestion}
                     sumNumbers={sumNumbers}
                     setSumNumbers={setSumNumbers}
-                    onAddType={() => {
-                        /* input type and marks */
-                        const type = question;
-                        const marks = question;
-                    }}
                 />
             )}
 

@@ -11,14 +11,19 @@ export interface Question {
 
 // Save a question to the 'questions' collection for a specific exam
 // Accepts optional data for sum questions
-export async function saveQuestionToExam(examId: string, type: string, data?: number[]) {
-  const question: Question = {
+// Save a question to the 'questions' collection for a specific exam
+// Accepts optional data for sum questions and groupTypeId
+export async function saveQuestionToExam(examId: string, type: string, data?: number[], groupTypeId?: string) {
+  const question: Question & { groupTypeId?: string } = {
     examId,
     type,
     createdAt: new Date(),
   };
   if (data && Array.isArray(data)) {
     question.data = data;
+  }
+  if (groupTypeId) {
+    question.groupTypeId = groupTypeId;
   }
   await addDoc(collection(db, 'questions'), question);
 }
