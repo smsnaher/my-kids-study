@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <div>
-          <h1>Welcome to your Dashboard</h1>
+          <h1 style={{ color: 'green', fontSize: '24px' }}>Welcome {userData?.displayName || 'User'}</h1>
         </div>
         <button onClick={handleLogout} className="logout-button">
           Logout
@@ -38,26 +38,6 @@ const Dashboard: React.FC = () => {
         <div className="info-item">
           <strong>Email:</strong> {currentUser?.email}
         </div>
-        {userData?.displayName && (
-          <div className="info-item">
-            <strong>Display Name:</strong> {userData.displayName}
-          </div>
-        )}
-        {userData?.role && (
-          <div className="info-item">
-            <strong>Role:</strong> {userData.role}
-          </div>
-        )}
-        <div className="info-item">
-          <strong>User ID:</strong> {currentUser?.uid}
-        </div>
-        {userData?.createdAt && (
-          <div className="info-item">
-            <strong>Account Created:</strong> {userData.createdAt.toDate().toLocaleDateString()}
-          </div>
-
-        )}
-        {/* <button className="switch-button" onClick={}>Switch button</button> */}
       </div>
 
       <div className="dashboard-content">
