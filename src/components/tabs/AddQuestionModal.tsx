@@ -1,7 +1,7 @@
 import React from 'react';
-import SumQuestion from '../questions/SumQuestion';
-import SubtractionQuestion from '../questions/SubtractionQuestion';
 import styles from './ExamDetail.module.css';
+import { QuestionGroupType } from '../questions/QuestionGroupType';
+import { QuestionAddingForm } from '../questions/QuestionAddingForm';
 
 interface AddQuestionModalProps {
   question: string;
@@ -30,50 +30,29 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 }) => (
   <div className={styles.modalOverlay}>
     <div className={styles.modal}>
-
-    
-
-
-
-
       <div className={styles.modalHeader}>
         <h3 style={{ marginTop: 0 }}>Question Group</h3>
         <button onClick={onClose} className={styles.closeBtn}>&times;</button>
       </div>
 
-      <form style={{ marginBottom: 24 }} onSubmit={e => { e.preventDefault(); onAddType(); }}>
-        <input type="text" placeholder="Question Type" value={question} onChange={e => setQuestion(e.target.value)} />
-        <input type="text" placeholder="Marks" value={question} onChange={e => setQuestion(e.target.value)} />
-        <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : 'Save'}
-        </button>
-      </form>
+      <QuestionGroupType
+        question={question}
+        setQuestion={setQuestion}
+        saving={saving}
+        onAddType={onAddType}
+      />
 
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
-        <h3 style={{ marginTop: 0 }}>Add Question</h3>
-        <select value={question} onChange={e => setQuestion(e.target.value)} className={styles.select}>
-          <option value="">Select a question</option>
-          <option value="sum">Sum</option>
-          <option value="subtraction">Subtraction</option>
-        </select>
-        {question === 'sum' && <SumQuestion numbers={sumNumbers} setNumbers={setSumNumbers} />}
-        {question === 'subtraction' && <SubtractionQuestion />}
-        <div className={styles.actions}>
-          <button type="submit" disabled={saving}>
-            {saving ? 'Saving...' : 'Add Question'}
-          </button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
-        </div>
-        {error && <div className={styles.error}>{error}</div>}
-        {success && <div className={styles.success}>Question added!</div>}
-      </form>
+      <QuestionAddingForm
+        question={question}
+        setQuestion={setQuestion}
+        saving={saving}
+        error={error ?? undefined}
+        success={success}
+        onClose={onClose}
+        onSubmit={onSubmit}
+        sumNumbers={sumNumbers.map(Number)}
+        setSumNumbers={(nums: number[]) => setSumNumbers(nums.map(String))}
+      />
     </div>
   </div>
 );
