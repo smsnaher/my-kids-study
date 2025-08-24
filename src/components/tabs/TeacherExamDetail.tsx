@@ -166,14 +166,9 @@ export const TeacherExamDetail: React.FC = () => {
 
     return (
         <div className={styles.examDetailContainer}>
-            {/* DEBUG: Show userData and role */}
-            <div style={{ background: '#ffe', color: '#333', padding: 8, marginBottom: 12, fontSize: 13, border: '1px solid #ccc' }}>
-                <strong>DEBUG userData:</strong> {JSON.stringify(userData)}<br />
-                <strong>DEBUG role:</strong> {userData?.role}
-            </div>
             <div className={styles.examDetail}>
                 <div className={styles.examDetailHeader}>
-                    <Link to="/my-kids-study/" className={styles.closeBtn}>← Back to Dashboard</Link>
+                    <Link to="/my-kids-study/" className={styles.backBtn}>← Back to Dashboard</Link>
                     {userData?.role === 'teacher' && (
                         <button
                             className={styles.modal}
@@ -193,6 +188,7 @@ export const TeacherExamDetail: React.FC = () => {
             {/* Modal for adding question */}
             {userData?.role === 'teacher' && showForm && (
                 <AddQuestionModal
+                    examId={exam.id || exam.docId}
                     question={question}
                     setQuestion={setQuestion}
                     saving={saving}
