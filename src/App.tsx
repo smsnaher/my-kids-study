@@ -34,8 +34,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/kids-study/" element={<AuthWrapper />} />
-          <Route path="/kids-study/exam/:id" element={<ExamDetail />} />
+          <Route path="/my-kids-study/" element={<AuthWrapper />} />
+          <Route path="/my-kids-study/exam/:id" element={<ExamDetail />} />
         </Routes>
       </Router>
     </AuthProvider>

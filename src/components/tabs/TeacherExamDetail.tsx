@@ -173,7 +173,7 @@ export const TeacherExamDetail: React.FC = () => {
             </div>
             <div className={styles.examDetail}>
                 <div className={styles.examDetailHeader}>
-                    <Link to="/kids-study/" className={styles.closeBtn}>← Back to Dashboard</Link>
+                    <Link to="/my-kids-study/" className={styles.closeBtn}>← Back to Dashboard</Link>
                     {userData?.role === 'teacher' && (
                         <button
                             className={styles.modal}

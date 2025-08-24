@@ -54,7 +54,7 @@ export const StudentExamDetail: React.FC = () => {
             setSubmitSuccess(true);
             setTimeout(() => {
                 setSubmitSuccess(false);
-                navigate('/kids-study/');
+                navigate('/my-kids-study/');
             }, 2000);
         } catch {
             setSubmitError('Failed to submit exam.');
@@ -73,7 +73,7 @@ export const StudentExamDetail: React.FC = () => {
 
             setTimeout(() => {
                 setSaveSuccess(true);
-                navigate('/kids-study/');
+                navigate('/my-kids-study/');
             }, 2000);
             
             setTimeout(() => setSaveSuccess(false), 2000);
